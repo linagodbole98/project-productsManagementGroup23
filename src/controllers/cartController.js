@@ -31,6 +31,7 @@ const createCart = async function (req, res) {
       if (!isValidObjectId(data.items[i].productId)) return res.status(400).send({ status: false, message: 'Please provide valid productId' })
       let productCheck = await productModel.findById(data.items[i].productId)
       if (!productCheck) return res.status(404).send({ status: false, message: ` product ${data.items[i].productId} not found` })
+      if (!/^[0-9]+$/.test(data.items[i].quantity)) return res.status(400).send({ status: false, message: "Quantity should be a valid number" })
       if (productCheck.isDeleted == true) return res.status(404).send({ status: false, message: `${data.items[i].productId} this product is deleted` })
       data.totalPrice = data.totalPrice+ productCheck.price * data.items[i].quantity
     }
@@ -39,7 +40,7 @@ const createCart = async function (req, res) {
     if (cartCheck) {
       const updateData = await cartModel.findOneAndUpdate(
         {userId:userId},
-        {$inc:{totalPrice:data.totalPrice,totalItems:data.totalItems},$push:{items:data.items}},
+        {$inc:{totalPrice:data.totalPrice,totalItems:data.totalItems},$addToSet:{items:data.items}},
         {new:true})
         return res.status(200).send({status:false,message:"success", data:updateData})
 
@@ -70,7 +71,7 @@ const getCart = async function (req, res) {
     if (!userCheck) return res.status(404).send({ status: false, message: "no user found" })
     if (req.tokenId != userId) return res.status(403).send({ status: false, message: "you are unauthorized" })
 
-    let cartData = await cartModel.findOne({ userId: userId }).populate('products')
+    let cartData = await cartModel.findOne({ userId: userId })
     if (!cartData) return res.status(404).send({ status: false, message: "no cart found" })
     res.status(200).send({status:true,message:"success",data:cartData})
     
