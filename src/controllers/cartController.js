@@ -40,14 +40,14 @@ const createCart = async function (req, res) {
     if (data.quantity || data.quantity == "") {
       if (!/^[0-9]+$/.test(data.quantity)) return res.status(400).send({ status: false, message: "Quantity should be a valid number" })
     }
-    let reqItems = [{
+    let items = [{
       productId: data.productId,
       quantity: data.quantity || 1
     }]
     createData.totalPrice = productCheck.price * (data.quantity || 1)
     createData.totalItems = 1
 
-    createData.items = reqItems
+    createData.items = items
 
     if (data.cartId || data.cartId == "") {
       if (!isValidObjectId(data.cartId)) return res.status(400).send({ status: false, message: 'Please provide valid userId' })
@@ -155,8 +155,6 @@ const updateCart = async function (req, res) {
             { items: cart, totalPrice: isPresentCartId.totalPrice - isPresentProductId.price }, { new: true })
           return res.status(200).send({ status: true, msg: "One item remove successfully", data: cartUpdated })
         }
-      } else {
-        return res.send
       }
     }
 
@@ -212,7 +210,7 @@ const deleteCart = async function (req, res) {
       return res.status(404).send({ status: false, msg: "there is No such cart of this user" });
     }
     let updatedUserCart = await cartModel.findOneAndUpdate({ userId: userId }, { items: [], totalPrice: 0, totalItems: 0 }, { new: true })
-    return res.status(200).send({ status: true, message: " cart deleted successfully" })
+    return res.status(204).send({ status: true, message: " cart deleted successfully" })
   } catch (err) {
     console.log(err)
     return res.status(500).send({ status: false, message: err.message });
