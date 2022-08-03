@@ -76,7 +76,7 @@ const createCart = async function (req, res) {
         { userId: userId },
         { $inc: { totalPrice: createData.totalPrice, totalItems: createData.totalItems }, $push: { items: createData['items'] } },
         { new: true })
-      return res.status(200).send({ status: false, message: "success", data: updateData })
+      return res.status(200).send({ status: true, message: "success", data: updateData })
 
     } else {
       const result = await cartModel.create(createData)
