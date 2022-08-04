@@ -2,6 +2,8 @@ const productModel = require("../Model/productModel")
 const mongoose = require("mongoose");
 const userModel = require("../Model/userModel");
 const cartModel = require("../Model/cartModel");
+//-------------------------------------------------[PRODUCT VALIDATION]---------------------------------------------------------------------
+
 
 const isValidObjectId = function (ObjectId) {
   return mongoose.Types.ObjectId.isValid(ObjectId);
@@ -16,6 +18,9 @@ const isValid = (value) => {
   if (typeof value === "string" && value.trim().length == 0) return false;
   if (typeof value == "string") return true;
 }
+
+//-------------------------------------------[CREATE CART]----------------------------------------------------
+
 
 const createCart = async function (req, res) {
   try {
@@ -47,7 +52,7 @@ const createCart = async function (req, res) {
         {userId:userId},
         {$inc:{totalPrice:data.totalPrice,totalItems:data.totalItems},$push:{items:data.items}},
         {new:true})
-        return res.status(200).send({status:false,message:"success", data:updateData})
+        return res.status(200).send({status: true,message:"success", data:updateData})
 
     }else{
       const createData = await cartModel.create(data)
@@ -59,7 +64,7 @@ const createCart = async function (req, res) {
   }
 };
 
-
+//----------------------------------------------[UPDATE CART]-------------------------------------------------
 
 const updateCart = async function (req, res) {
   try {
@@ -114,21 +119,26 @@ const updateCart = async function (req, res) {
 
             if(removeProduct==0){
                 const productRemove= await cartModel.findOneAndUpdate({_id:cartId}, {$pull:{items:{productId:productId}},
-                   totalPrice: isPresentCartId.totalPrice - changePrice, totalItems:isPresentCartId.totalItems-1},{new:true})
+                   totalPrice: isPresentCartId.totalPrice - changePrice, 
+                   totalItems:isPresentCartId.totalItems-1},{new:true}).select({__v:0})
               return  res.status(200).send({status:true, msg:"Remove product Successfully",data:productRemove})
             }
 
             if(removeProduct==1){
                 if(cart[i].quantity==1 && removeProduct==1 ){
                     const priceUpdate=await cartModel.findOneAndUpdate({_id:cartId},{$pull:{items:{productId}},
-                      totalPrice:isPresentCartId.totalPrice-changePrice, totalItems:isPresentCartId.totalItems-1},{new:true})
+                      totalPrice:isPresentCartId.totalPrice-changePrice,
+                      totalItems:isPresentCartId.totalItems-1},{new:true}).select({__v:0})
+                        
                 return res.status(200).send({status:true,msg:"Remove product and price update successfully",data:priceUpdate})
                 }
                 cart[i].quantity=cart[i].quantity-1;
                 const cartUpdated= await cartModel.findByIdAndUpdate({_id:cartId},
-                  {items:cart,totalPrice:isPresentCartId.totalPrice -isPresentProductId.price},{new:true})
+                  {items:cart,totalPrice:isPresentCartId.totalPrice -isPresentProductId.price},{new:true}).select({__v:0})
               return  res.status(200).send({status:true,msg:"One item remove successfully",data:cartUpdated})
-            }
+            } 
+        } else {
+          return res.status(400).send({status:false,msg:"this product is not found"})
         }
     }
 
@@ -137,6 +147,8 @@ const updateCart = async function (req, res) {
     res.status(500).send({ status: false, message: err.message });
 }
 }
+
+//------------------------------------------------[GET CART]---------------------------------------//
 const getCart = async function (req, res) {
   try {
     let userId = req.params.userId;
@@ -154,12 +166,12 @@ const getCart = async function (req, res) {
     return res.status(500).send({ status: false, message: err.message });
   }
 };
+//-------------------------------------------------[DELETE CART]-------------------------------------------
 const deleteCart = async function (req, res) {
   try {
     let userId = req.params.userId;
         
-        //--------------------------- ---------------------Validation Starts-------------------------------------//
-        // validating userid from params
+          // validating userid from params
         if (!isValid(userId)) {
             return res.status(400).send({ status: false, message: "Invalid request parameters. userId is required" });
         }
@@ -176,8 +188,10 @@ const deleteCart = async function (req, res) {
         if (!usercart) {
             return res.status(404).send({ status: false, msg: "No such user found. Please register and try again" });
         }
+        
         let updatedUserCart = await cartModel.findOneAndUpdate({ userId: userId }, { items: [], totalPrice: 0, totalItems: 0 }, { new: true })
-        return res.status(200).send({ status: true , message: " cart deleted successfully"})
+        console.log(updatedUserCart)
+        return res.status(204).send({ status: true , message: " cart deleted successfully"})
   } catch (err) {
     console.log(err)
     return res.status(500).send({ status: false, message: err.message });

@@ -328,7 +328,7 @@ const updateProduct = async function (req, res) {
         res.status(500).send({ status: false, message: error.message })
     }
 }
-
+//-------------------------------------------------[DELETE PRODUCT]---------------------------------------------------------------------
 const deleteProduct = async function (req, res) {
     try {
         let productId = req.params.productId
