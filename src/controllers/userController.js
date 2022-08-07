@@ -231,9 +231,9 @@ const updatedProfile = async (req, res) => {
             return res.status(400).send({ status: false, message: "userId is Invalid" });
         }
 
-        //const findUserId = await userModel.findById(userId);
-        //if (!findUserId)
-        //return res.status(403).send({ status: false, message: "NO DATA FOUND" });
+        const findUserId = await userModel.findById(userId);
+        if (!findUserId)
+        return res.status(404).send({ status: false, message: "NO DATA FOUND" });
         if (userId != userIdfromtoken) {
             return res.status(403).send({ status: false, message: "YOU ARE NOT AUTHORIZED" });
         }
