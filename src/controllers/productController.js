@@ -10,7 +10,6 @@ const isValidRequestBody = function (request) {
 const isValid = (value) => {
     if (typeof value === "undefined" || typeof value === "null") return false;
     if (typeof value === "string" && value.trim().length == 0) return false;
-    //if (typeof value === "object" && Object.keys(value).length == 0) return false;
     if (typeof value == "string") return true;
 }
 const isValidString = (String) => {
@@ -20,9 +19,6 @@ const isValidString = (String) => {
 const isValidPrice = (price) => {
     return /^[1-9]\d{0,7}(?:\.\d{1,2})?$/.test(price)
 }
-// const isValidSize = (sizes) => {
-//     return ["S", "XS", "M", "X", "L", "XXL", "XL"].includes(sizes);
-// }
 const isValidObjectId = function (ObjectId) {
     return mongoose.Types.ObjectId.isValid(ObjectId);
 }
@@ -132,9 +128,6 @@ const addproduct = async (req, res) => {
         data.productImage = uploadedFileURL
         if (!/(\.jpg|\.jpeg|\.bmp|\.gif|\.png)$/i.test(data.productImage)) return res.status(400).send({ status: false, message: "Please provide profileImage in correct format like jpeg,png,jpg,gif,bmp etc" })
 
-        // console.log(availableSizes.length);
-
-
         let created = await productModel.create(data)
         res.status(201).send({ status: true, message: 'Product Created Successfully', data: created })
     } catch (err) {
@@ -142,7 +135,6 @@ const addproduct = async (req, res) => {
         res.status(500).send({ status: false, error: err.message })
     }
 }
-//----------------------------------------------[Get productId]----------------------//
 
   
 //----------------------------------------------------[GET PRODUCT BY ID]----------------------------------------

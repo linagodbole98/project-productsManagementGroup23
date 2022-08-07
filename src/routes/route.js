@@ -26,6 +26,8 @@ router.put("/users/:userId/cart" ,middleware.authentication,cartController.updat
 router.get("/users/:userId/cart",middleware.authentication,cartController.getCart)
 router.delete("/users/:userId/cart",middleware.authentication,cartController.deleteCart)
 
+//OREDR
 router.post("/users/:userId/orders",middleware.authentication,orderController.createOrder)
+
 
 module.exports = router;

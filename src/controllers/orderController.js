@@ -2,7 +2,6 @@ const orderModel = require("../Model/orderModel")
 const userModel = require("../Model/userModel");
 const cartModel = require("../Model/cartModel");
 
-
 const createOrder = async function (req, res) {
     try {
         let userId = req.params.userId.trim()
@@ -96,10 +95,7 @@ if(req.body.isDeleted== Boolean){
     if(req.body.isDeleted==true){
         orderCheck.deletedAt=new Date.now()
     }
-   
 }
-
-
 let updateOrder= await orderModel.findByIdAndUpdate({_id:orderId},orderCheck,{new:true})
 res.status(201).send({status:true,message:"Success",data:updateOrder})
 }
@@ -107,16 +103,5 @@ catch (error) {
     res.status(500).send({ status: false, message: error.message })
     console.log(error)
 }
-
 }
-
-
-
-
-
-
-
-
-
-
 module.exports={createOrder,updateOrder}
