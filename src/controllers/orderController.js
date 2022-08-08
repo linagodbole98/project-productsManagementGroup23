@@ -133,8 +133,8 @@ const updateOrder = async function (req, res) {
                     { new: true })
                 return res.status(200).send({ status: true, message: `Successfully updated the order details.`, data: updateorderStatus })
             }
-            if (checkOrder.status == "cancelled") {
-                return res.status(400).send({ status: false, message: `Order is already Cancelled.` })
+            if (checkOrder.status == "cancled") {
+                return res.status(400).send({ status: false, message: `Order is already cancled.` })
             }
         }else if(checkOrder.cancellable == false){
             if(statusbody=="completed" && checkOrder.status=="pending"){
