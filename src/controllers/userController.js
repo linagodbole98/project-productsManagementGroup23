@@ -66,10 +66,12 @@ const registerUser = async function (req, res) {
         //--------------------------------------Validation Starts----------------------------------//
 
         if (!fname) return res.status(400).send({ status: false, message: "fname is required" })
-        if (!isValid(fname)&& !(nameRegex.test(fname))) return res.status(400).send({ status: false, message: "fname must be in string & not empty" })
+        if (!isValid(fname))            return res.status(400).send({ status: false, message: "fname is not empty" })
+        if( !(nameRegex.test(fname))) return res.status(400).send({ status: false, message: "fname must be in string & not empty" })
 
         if (!lname) return res.status(400).send({ status: false, message: "lname is required" })
         if (!isValid(lname)) return res.status(400).send({ status: false, message: "lname must be in string & not empty" })
+        if( !(nameRegex.test(lname))) return res.status(400).send({ status: false, message: "lname must be in string & not empty" })
 
         if (!email) return res.status(400).send({ status: false, message: "email is required" })
         if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) return res.status(400).send({ status: false, message: "enter valid email" })
@@ -87,7 +89,7 @@ const registerUser = async function (req, res) {
         if ((password).includes(" ")) { { return res.status(400).send({ status: false, message: "Please remove any empty spaces in password" }); } }
         if (!((password.length >= 8) && (password.length < 15))) { return res.status(400).send({ status: false, message: "Password should be in 8-15 character" }) }
 
-        let protectedPassword = await bcrypt.hash(password, 10)
+        let protectedPassword = await bcrypt.hash(password, 10) 
         requestBody.password = protectedPassword
 
         //if (!profileImage) return res.status(400).send({ status: false, message: "profileImage is required" })
@@ -231,9 +233,9 @@ const updatedProfile = async (req, res) => {
             return res.status(400).send({ status: false, message: "userId is Invalid" });
         }
 
-        //const findUserId = await userModel.findById(userId);
-        //if (!findUserId)
-        //return res.status(403).send({ status: false, message: "NO DATA FOUND" });
+        const findUserId = await userModel.findById(userId);
+        if (!findUserId)
+        return res.status(404).send({ status: false, message: "NO DATA FOUND" });
         if (userId != userIdfromtoken) {
             return res.status(403).send({ status: false, message: "YOU ARE NOT AUTHORIZED" });
         }
