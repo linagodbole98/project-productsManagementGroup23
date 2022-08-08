@@ -235,8 +235,8 @@ const updateProduct = async function (req, res) {
         }
 
 
-        if (description || typeof description == 'string') {//check
-            if (!(isValid(description) || isValidString(description))) return res.status(400).send({ status: false, message: "description is required." });
+        if (description || typeof description == 'string') {
+            if (!isValid(description)) return res.status(400).send({ status: false, message: "description is required." });
             updatedata.description = description
         }
 

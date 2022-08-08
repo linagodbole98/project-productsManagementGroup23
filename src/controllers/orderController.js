@@ -55,13 +55,13 @@ const createOrder = async function (req, res) {
         }
         order.cancellable = cancellable
 
-        // let sts = ["pending", "completed", "cancled"]
-        // if (req.body.status) {
-        //     if (!sts.includes(req.body.status)) {
-        //         return res.status(400).send({ status: false, message: "status should be among pending, completed, cancled" })
-        //     }
-        //     order.status = req.body.status
-        // }
+        let sts = ["pending"]
+        if (req.body.status) {
+            if (!sts.includes(req.body.status)) {
+                return res.status(400).send({ status: false, message: "status should be pending" })
+            }
+            order.status = req.body.status
+        }
         // if (req.body.isDeleted) {
         //     if (typeof req.body.isDeleted != Boolean) {
         //         return res.status(400).send({ status: false, message: "isDeleted should be  in Boolean format" })
@@ -74,6 +74,12 @@ const createOrder = async function (req, res) {
         //     }
         //     cart.isDeleted=isDeleted
         // }
+        let filter={}
+           filter.items=[]
+           filter.totalItems=0
+           filter.totalPrice=0
+        let cartUpdated=await cartModel .findOneAndUpdate({_id:cartId},filter,{new:true})
+
         let oredrCreate = await orderModel.create(order)
         res.status(201).send({ status: true, message: "Success", data: oredrCreate })
 
